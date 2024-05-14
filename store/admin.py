@@ -2,6 +2,10 @@ from django.contrib import admin
 
 from .models import Category, Product
 
+admin.site.site_header = 'CoE Digital Manufacturing Administration'
+admin.site.site_title  = 'CoE Digital Manufacturing'
+admin.site.index_title  = 'Admin'
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
