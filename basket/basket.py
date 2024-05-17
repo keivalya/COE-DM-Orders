@@ -7,7 +7,6 @@ class Basket():
     A base Basket class, providing some default behaviors that
     can be inherited or overrided, as necessary.
     """
-
     def __init__(self, request):
         self.session = request.session
         basket = self.session.get('skey')
@@ -15,7 +14,7 @@ class Basket():
             basket = self.session['skey'] = {}
         self.basket = basket
 
-    def add(self, product, qty, inner, outer, height):
+    def add(self, product, qty, designation=None):
         """
         Adding and updating the users basket session data
         """
@@ -23,11 +22,9 @@ class Basket():
 
         if product_id in self.basket:
             self.basket[product_id]['qty'] = qty
-            self.basket[product_id]['inner'] = inner
-            self.basket[product_id]['outer'] = outer
-            self.basket[product_id]['height'] = height
+            self.basket[product_id]['designation'] = designation
         else:
-            self.basket[product_id] = {'price': str(product.price), 'qty': qty, 'inner': inner}
+            self.basket[product_id] = {'price': str(product.price), 'qty': qty, 'designation': designation}
 
         self.save()
 

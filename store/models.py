@@ -1,10 +1,22 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.contrib.postgres.fields import ArrayField
 
 class ProductManager(models.Manager):
     def get_queryset(self):
         return super(ProductManager, self).get_queryset().filter(is_active=True)
+
+class SeparatedValuesField(models.TextField):
+    def __init__(self, *args, **kwargs):
+        self.token = kwargs.pop('token', ',')
+        super(SeparatedValuesField, self).__init__(*args, **kwargs)
+
+    def to_python(self, value):
+        if not value: return
+        if isinstance(value, str):
+            return value
+        return value.split(self.token)
 
 class Category(models.Model):
     name = models.CharField(max_length=255, db_index=True)
@@ -32,8 +44,15 @@ class Product(models.Model):
     is_active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    # listOfDesignations = SeparatedValuesField(default=None, blank=True, null=True)
+    listOfDesignations = models.TextField(default=None, blank=True, null=True)
     objects = models.Manager()
     products = ProductManager()
+
+    def get_designations_as_list(self):
+        if self.listOfDesignations:
+            return self.listOfDesignations.split()
+        return []
 
     class Meta:
         verbose_name_plural = 'Products'

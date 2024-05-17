@@ -15,23 +15,16 @@ def basket_add(request):
     basket = Basket(request)
     if request.POST.get('action') == 'post':
         product_id = int(request.POST.get('productid'))
+        designation = request.POST.get('designation')
         product_qty = int(request.POST.get('productqty'))
-        product_inner = int(request.POST.get('productinner'))
-        product_outer = int(request.POST.get('productouter'))
-        product_height = int(request.POST.get('productheight'))
         product = get_object_or_404(Product, id=product_id)
         basket.add(
-            product=product, 
-            qty=product_qty, 
-            inner=product_inner, 
-            outer=product_outer,
-            height=product_height
+            product=product,
+            qty=product_qty,
+            designation=designation
         )
 
-        basketqty = basket.__len__()
-        response = JsonResponse(
-            {'qty': basketqty, 'inner':product_inner, 'outer':product_outer, 'height':product_height}
-        )
+        response = JsonResponse({'designation': designation})
         return response
 
 

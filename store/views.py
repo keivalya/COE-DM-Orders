@@ -7,7 +7,8 @@ def product_all(request):
 
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, in_stock=True)
-    return render(request, 'store/products/single.html', {'product': product})
+    designations_list = product.get_designations_as_list()
+    return render(request, 'store/products/single.html', {'product': product, 'designations_list':designations_list})
 
 def category_list(request, category_slug):
     category = get_object_or_404(Category, slug=category_slug)
