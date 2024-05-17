@@ -23,22 +23,74 @@
                         <div class="row p-3">
                             <div class="col-6">
                                 <label for="select">Qty</label>
-                                <select id="select">
-                                    <option value="">1</option>
-                                    <option value="">2</option>
-                                    <option value="">3</option>
-                                    <option value="">4</option>
+                                <select id="select" class="form-select">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
                                 </select>
-
                             </div>
-                            <div class="col-6 text-end"><button type="button" class="btn btn-secondary btn-sm">Add to
-                                    basket</button></div>
+                            <div class="col-6" id="inner_d">
+                                {% csrf_token %}
+                                <label for="select_in">Inner Diameter (d)</label>
+                                <select id="select_in" class="form-select">
+                                    <option value="15">15</option>
+                                    <option value="17">17</option>
+                                    <option value="20">20</option>
+                                </select>
+                            </div>
+                            <div class="col-6" id="outer_d">
+                                {% csrf_token %}
+                                <label for="select_out">Outer diameter (D)</label>
+                                <select id="select_out" class="form-select">
+                                    <option value="40">40</option>
+                                    <option value="42">42</option>
+                                </select>
+                            </div>
+                            <div class="col-6" id="height">
+                                {% csrf_token %}
+                                <label for="select_ht">Height of bearing (B)</label>
+                                <select id="select_ht" class="form-select">
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="17.5">17.5</option>
+                                </select>
+                            </div>
+                            <div class="col-6 text-end">
+<button type="button" id="add-button" value="{{product.id}}" class="btn btn-secondary btn-sm">Add to basket</button></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
-
 </div>
+
+<script>
+    $(document).on('click', '#add-button', function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "basket:basket_add" %}',
+            data: {
+                productid: $('#add-button').val(),
+                productqty: $('#select option:selected').text(),
+                productinner: $('#select_in option:selected').text(),
+                productouter: $('#select_out option:selected').text(),
+                productheight: $('#select_ht option:selected').text(),
+                csrfmiddlewaretoken: "{{csrf_token}}",
+                action: 'post'
+            },
+            success: function (json) {
+                console.log(json)
+               // document.getElementById("basket-qty").innerHTML = json
+            },
+            error: function (xhr, errmsg, err) {}
+        });
+    })
+</script>
+
 {% endblock %}
