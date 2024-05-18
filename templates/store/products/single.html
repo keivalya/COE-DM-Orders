@@ -27,12 +27,23 @@
                                 <label for="designation">Designation</label>
                                 <select id="designation" class="form-select" data-live-search="true">
                                     {% for designation in designations_list %}
-                                    <option value="{{ designation}}" data-tokens="{{ designation}}">
+                                    <option value="{{ designation.name }}" data-tokens="{{ designation.name }}">
                                         {{ designation }}
                                     </option>
                                     {% endfor %}
-                                {% endif %}
                                 </select>
+                                
+                                <label for="housing">Choose Housing</label>
+                                <select id="housing" class="form-select" data-live-search="true">
+                                    {% for product in products %}
+                                    {% if product.category.name == "Housing" %}
+                                        <option value="{{ product }}" data-tokens="{{ product }}">
+                                            {{ product }}
+                                        </option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% endif %}
                             </div>
                             <div class="col-6 text-end">
 <button type="button" id="add-button" value="{{product.id}}" class="btn btn-secondary btn-sm">Add to basket</button></div>
@@ -59,6 +70,7 @@
                 productid: $('#add-button').val(),
                 productqty: '1',
                 designation: $('#designation option:selected').text(),
+                housing: $('#housing option:selected').text(),
                 csrfmiddlewaretoken: "{{csrf_token}}",
                 action: 'post'
             },

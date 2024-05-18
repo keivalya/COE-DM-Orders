@@ -51,7 +51,7 @@ class Product(models.Model):
 
     def get_designations_as_list(self):
         if self.listOfDesignations:
-            return self.listOfDesignations.split()
+            return self.listOfDesignations.split("\n")
         return []
 
     class Meta:
