@@ -24,10 +24,11 @@
   <div class="album py-5 bg-light">
     <div class="container">
 
-      <div class="pb-3 h5">All Products</div>
+      <div class="pb-3 h5">All Bearings</div>
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3">
 
         {% for product in products %}
+        {% if product.category.name == "Bearings" %}
 
         <div class="col">
           <div class="card shadow-sm">
@@ -40,6 +41,7 @@
           </div>
         </div>
 
+        {% endif %}
         {% endfor %}
 
       </div>

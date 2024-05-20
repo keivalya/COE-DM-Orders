@@ -6,19 +6,14 @@
 {% block content %}
 <div class="container">
     <main class="pt-5">
-        <div class="row g-3">
+        <div class="row g-3 border">
             <div class="col-md-5 col-lg-5 order-md-first bg-light">
                 <img class="img-fluid mx-auto d-block" alt="Responsive image" src="{{ product.image.url }}">
             </div>
-            <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5">
-                <h1 class="mb-0 h4">{{ product.title }}</h1>
+            <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5 align-self-center">
+                <h1 class="mb-0 h4">{{ product.title }} Bearing</h1>
                 <p>{{ product.description|slice:":355" }}...</p>
                 <div class="border">
-                    <div class="col border-bottom">
-                        <div class="row p-3">
-                            <div class="col-6 text-end"><span class="h4 fw-bold">₹ {{ product.price }}</span></div>
-                        </div>
-                    </div>
                     <div class="col">
                         <div class="row p-3">
                             <div class="col-6">
@@ -32,9 +27,31 @@
                                     </option>
                                     {% endfor %}
                                 </select>
-                                
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+
+        {% comment %} CHOOSING HOUSING {% endcomment %}
+        <div class="row g-3 border">
+            <div class="col-md-5 col-lg-5 order-md-first bg-light">
+                <embed id="p1" src="static/Oval.pdf" width="500" height="375" type="application/pdf">
+            </div>
+            <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5 align-self-center">
+                <h1 class="mb-0 h4">Choose the Housing for your Bearing</h1>
+                <div class="border">
+                    <div class="col">
+                        <div class="row p-3">
+                            <div class="col-6">
+                                {% csrf_token %}
+                                {% if designations_list %}                                
                                 <label for="housing">Choose Housing</label>
-                                <select id="housing" class="form-select" data-live-search="true">
+                                <select id="housing" class="form-select" data-live-search="true" onchange="housechange()">
                                     {% for product in products %}
                                     {% if product.category.name == "Housing" %}
                                         <option value="{{ product }}" data-tokens="{{ product }}">
@@ -45,22 +62,55 @@
                                 </select>
                                 {% endif %}
                             </div>
-                            <div class="col-6 text-end">
-<button type="button" id="add-button" value="{{product.id}}" class="btn btn-secondary btn-sm">Add to basket</button></div>
-                            </div>
                         </div>
-
-                        {% if not designations_list %}
-                        <embed src="static/{{product.slug}}.pdf" width="500" height="375" type="application/pdf">
-                        {% endif %}
                     </div>
                 </div>
             </div>
+        </div>
+        <br />
+        <br />
+
+        {% comment %} CHOOSING SHAFT {% endcomment %}
+        <div class="row g-3 border">
+            <div class="col-md-5 col-lg-5 order-md-first bg-light">
+                {% comment %} <embed id="p1" src="static/Oval.pdf" width="500" height="375" type="application/pdf"> {% endcomment %}
+            </div>
+            <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5 align-self-center">
+                <h1 class="mb-0 h4">Choose the Shaft</h1>
+                <div class="border">
+                    <div class="col">
+                        <div class="row p-3">
+                            <div class="col-6">
+                                {% csrf_token %}
+                                {% if designations_list %}                                
+                                <label for="housing">Choose Housing</label>
+                                <select id="housing" class="form-select" data-live-search="true" onchange="housechange()">
+                                    {% for product in products %}
+                                    {% if product.category.name == "Housing" %}
+                                        <option value="{{ product }}" data-tokens="{{ product }}">
+                                            {{ product }}
+                                        </option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 text-end">
+            <button type="button" id="add-button" value="{{product.id}}" class="btn btn-secondary btn-sm">Add to basket</button></div>
         </div>
     </main>
 </div>
 
 <script>
+    function housechange() {
+        console.log("static/"+$('#housing option:selected').text().trim()+".pdf");
+        return document.getElementById("p1").src = "static/"+$('#housing option:selected').text().trim()+".pdf";
+    };
     $(document).on('click', '#add-button', function (e) {
         e.preventDefault();
         $.ajax({
@@ -76,7 +126,7 @@
             },
             success: function (json) {
                 console.log(json)
-               // document.getElementById("basket-qty").innerHTML = json
+                document.getElementById("basket-qty").innerHTML = json.qty
             },
             error: function (xhr, errmsg, err) {}
         });
