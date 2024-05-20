@@ -40,7 +40,7 @@
         {% comment %} CHOOSING HOUSING {% endcomment %}
         <div class="row g-3 border" id="house">
             <div class="col-md-5 col-lg-5 order-md-first bg-light">
-                <embed id="p1" src="static/Oval.pdf" width="500" height="375" type="application/pdf">
+                <embed id="p1" class="embed-responsive mx-auto d-block" src="static/Oval.pdf" width="500" height="375" type="application/pdf">
             </div>
             <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5 align-self-center">
                 <h1 class="mb-0 h4">Choose the Housing for your Bearing</h1>
@@ -98,6 +98,8 @@
                 </div>
             </div>
         </div>
+        <br />
+        <br />
         <div class="col-6 text-end">
             <button type="button" id="add-button" value="{{product.id}}" class="btn btn-secondary btn-sm">Add to basket</button></div>
         </div>
