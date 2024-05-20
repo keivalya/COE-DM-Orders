@@ -20,7 +20,7 @@
                                 {% csrf_token %}
                                 {% if designations_list %}
                                 <label for="designation">Designation</label>
-                                <select id="designation" class="form-select" data-live-search="true">
+                                <select id="designation" class="form-select" data-live-search="true" onchange="tohouse()">
                                     {% for designation in designations_list %}
                                     <option value="{{ designation.name }}" data-tokens="{{ designation.name }}">
                                         {{ designation }}
@@ -38,7 +38,7 @@
         <br />
 
         {% comment %} CHOOSING HOUSING {% endcomment %}
-        <div class="row g-3 border">
+        <div class="row g-3 border" id="house">
             <div class="col-md-5 col-lg-5 order-md-first bg-light">
                 <embed id="p1" src="static/Oval.pdf" width="500" height="375" type="application/pdf">
             </div>
@@ -82,18 +82,16 @@
                         <div class="row p-3">
                             <div class="col-6">
                                 {% csrf_token %}
-                                {% if designations_list %}                                
-                                <label for="housing">Choose Housing</label>
-                                <select id="housing" class="form-select" data-live-search="true" onchange="housechange()">
+                                <label for="shaft">Choose Shaft</label>
+                                <select id="shaft" class="form-select" data-live-search="true" onchange="shaftchange()">
                                     {% for product in products %}
-                                    {% if product.category.name == "Housing" %}
+                                    {% if product.category.name == "Shaft" %}
                                         <option value="{{ product }}" data-tokens="{{ product }}">
                                             {{ product }}
                                         </option>
                                     {% endif %}
                                     {% endfor %}
                                 </select>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -107,6 +105,11 @@
 </div>
 
 <script>
+    function tohouse() {
+        console.log("Section changed to house");
+        document.documentElement.style.scrollBehavior = "smooth";
+        return document.getElementById("house").scrollIntoView({behavior: 'smooth' });
+    };
     function housechange() {
         console.log("static/"+$('#housing option:selected').text().trim()+".pdf");
         return document.getElementById("p1").src = "static/"+$('#housing option:selected').text().trim()+".pdf";
