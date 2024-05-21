@@ -25,7 +25,7 @@ class Basket():
             self.basket[product_id]['designation'] = designation
             self.basket[product_id]['housing'] = housing
         else:
-            self.basket[product_id] = {'price': str(product.price), 'qty': qty, 'designation': designation, 'housing':housing}
+            self.basket[product_id] = {'qty': qty, 'designation': designation, 'housing':housing}
 
         self.save()
 
@@ -42,8 +42,8 @@ class Basket():
             basket[str(product.id)]['product'] = product
 
         for item in basket.values():
-            item['price'] = Decimal(item['price'])
-            item['total_price'] = item['price'] * item['qty']
+            # item['price'] = Decimal(item['price'])
+            # item['total_price'] = item['price'] * item['qty']
             yield item
 
     def __len__(self):
@@ -61,8 +61,8 @@ class Basket():
             self.basket[product_id]['qty'] = qty
         self.save()
 
-    def get_total_price(self):
-        return sum(Decimal(item['price']) * item['qty'] for item in self.basket.values())
+    # def get_total_price(self):
+    #     return sum(Decimal(item['price']) * item['qty'] for item in self.basket.values())
 
     def delete(self, product):
         """
