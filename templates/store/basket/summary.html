@@ -24,50 +24,32 @@
     </div>
     {% endwith %}
     {% endfor %}
+
+    <div class="col-md-5 col-lg-4 order-md-last p-0 order-3">
+      <div class="d-grid gap-2 ">
+        <button id="checkout" role="button" class="btn btn-success fw-bold" type="button">Place my Order</button>
+      </div>
+    </div>
   </div>
 </main>
 
 <script>
-  // Delete Item
-  $(document).on('click', '.delete-button', function (e) {
+  $(document).on('click', '#checkout', function (e) {
+    console.log("The click works!")
     e.preventDefault();
-    var prodid = $(this).data('index');
     $.ajax({
-      type: 'POST',
-      url: '{% url "basket:basket_delete" %}',
+      type: "POST",
+      url: '{% url "orders:add" %}',
       data: {
-        productid: $(this).data('index'),
-        csrfmiddlewaretoken: "{{csrf_token}}",
-        action: 'post'
+        productid: product.id,
+        order_key: clientsecret,
+        csrfmiddlewaretoken: CSRF_TOKEN,
+        action: "post",
       },
       success: function (json) {
-        $('.product-item[data-index="' + prodid + '"]').remove();
-        // document.getElementById("subtotal").innerHTML = json.subtotal;
-        document.getElementById("basket-qty").innerHTML = json.qty
-      },
-      error: function (xhr, errmsg, err) {}
-    });
-  })
-
-  // Update Item
-  $(document).on('click', '.update-button', function (e) {
-    e.preventDefault();
-    var prodid = $(this).data('index');
-    $.ajax({
-      type: 'POST',
-      url: '{% url "basket:basket_update" %}',
-      data: {
-        productid: $(this).data('index'),
-        productqty: $('#select' + prodid + ' option:selected').text(),
-        csrfmiddlewaretoken: "{{csrf_token}}",
-        action: 'post'
-      },
-      success: function (json) {
-        document.getElementById("basket-qty").innerHTML = json.qty
-        // document.getElementById("subtotal").innerHTML = json.subtotal
-      },
-      error: function (xhr, errmsg, err) {}
-    });
+        console.log(json.success)
+      }
+    })
   })
 </script>
 

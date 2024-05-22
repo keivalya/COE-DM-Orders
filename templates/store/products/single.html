@@ -86,8 +86,8 @@
                                 <select id="shaft" class="form-select" data-live-search="true" onchange="shaftchange()">
                                     {% for product in products %}
                                     {% if product.category.name == "Shaft" %}
-                                        <option value="{{ product }}" data-tokens="{{ product }}">
-                                            {{ product }}
+                                        <option value="{{ product.name }}" data-tokens="{{ product.name }}">
+                                            {{ product.name }}
                                         </option>
                                     {% endif %}
                                     {% endfor %}
@@ -101,7 +101,7 @@
         <br />
         <br />
         <div class="col-6 text-end">
-            <button type="button" id="add-button" value="{{product.id}}" class="btn btn-secondary btn-sm">Add to basket</button></div>
+            <button type="button" id="add-button" value="{{product.id}}" class="btn btn-secondary btn-sm">Place my Order</button></div>
         </div>
     </main>
 </div>
@@ -120,7 +120,8 @@
         e.preventDefault();
         $.ajax({
             type: 'POST',
-            url: '{% url "basket:basket_add" %}',
+            // url: '{% url "basket:basket_add" %}',
+            url: '{% url "store:run_mqtt" %}',
             data: {
                 productid: $('#add-button').val(),
                 productqty: '1',
@@ -131,11 +132,12 @@
             },
             success: function (json) {
                 console.log(json)
-                document.getElementById("basket-qty").innerHTML = json.qty
             },
             error: function (xhr, errmsg, err) {}
         });
     })
+
+    
 </script>
 
 {% endblock %}
