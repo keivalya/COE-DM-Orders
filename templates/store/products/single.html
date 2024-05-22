@@ -54,8 +54,8 @@
                                 <select id="housing" class="form-select" data-live-search="true" onchange="housechange()">
                                     {% for product in products %}
                                     {% if product.category.name == "Housing" %}
-                                        <option value="{{ product }}" data-tokens="{{ product }}">
-                                            {{ product }}
+                                        <option value="{{ product.title }}" data-tokens="{{ product.title }}">
+                                            {{ product.title }}
                                         </option>
                                     {% endif %}
                                     {% endfor %}
