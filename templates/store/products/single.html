@@ -40,7 +40,7 @@
         {% comment %} CHOOSING HOUSING {% endcomment %}
         <div class="row g-3 border" id="house">
             <div class="col-md-5 col-lg-5 order-md-first bg-light">
-                <embed id="p1" class="embed-responsive mx-auto d-block" src="static/Oval.pdf" width="500" height="375" type="application/pdf">
+                <embed id="p1" class="embed-responsive mx-auto d-block" src="{% static 'Oval.pdf' %}" width="500" height="375" type="application/pdf">
             </div>
             <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5 align-self-center">
                 <h1 class="mb-0 h4">Choose the Housing for your Bearing</h1>
@@ -72,9 +72,9 @@
 
         {% comment %} CHOOSING SHAFT {% endcomment %}
         <div class="row g-3 border">
-            <div class="col-md-5 col-lg-5 order-md-first bg-light">
-                {% comment %} <embed id="p1" src="static/Oval.pdf" width="500" height="375" type="application/pdf"> {% endcomment %}
-            </div>
+            <!-- <div class="col-md-5 col-lg-5 order-md-first bg-light">
+                {% comment %} <embed id="p1" src="{% static 'Oval.pdf' %}" width="500" height="375" type="application/pdf"> {% endcomment %}
+            </div> -->
             <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5 align-self-center">
                 <h1 class="mb-0 h4">Choose the Shaft</h1>
                 <div class="border">
@@ -83,11 +83,11 @@
                             <div class="col-6">
                                 {% csrf_token %}
                                 <label for="shaft">Choose Shaft</label>
-                                <select id="shaft" class="form-select" data-live-search="true" onchange="shaftchange()">
+                                <select id="shaft" class="form-select" data-live-search="true">
                                     {% for product in products %}
                                     {% if product.category.name == "Shaft" %}
                                         <option value="{{ product.name }}" data-tokens="{{ product.name }}">
-                                            {{ product.name }}
+                                            {{ product.title }}
                                         </option>
                                     {% endif %}
                                     {% endfor %}
@@ -101,43 +101,125 @@
         <br />
         <br />
         <div class="col-6 text-end">
-            <button type="button" id="add-button" value="{{product.id}}" class="btn btn-secondary btn-sm">Place my Order</button></div>
+            <button type="button" id="add-button" value="{{product.id}}" class="btn btn-secondary btn-sm">Place my Order</button>
         </div>
     </main>
 </div>
+
+<!-- <div id="flash-message" class="flash-message">Your order is placed successfully! <br/> Thank You.</div> -->
+
+<div id="flash-message" class="flash-message">
+    <div class="flash-header">Order Placed</div>
+    <div class="flash-body">Your order is placed successfully. Thank You</div>
+</div>
+
+<!-- Include confetti.js library -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
 
 <script>
     function tohouse() {
         console.log("Section changed to house");
         document.documentElement.style.scrollBehavior = "smooth";
         return document.getElementById("house").scrollIntoView({behavior: 'smooth' });
-    };
+    }
+    
     function housechange() {
         console.log("static/"+$('#housing option:selected').text().trim()+".pdf");
         return document.getElementById("p1").src = "static/"+$('#housing option:selected').text().trim()+".pdf";
-    };
+    }
+    
     $(document).on('click', '#add-button', function (e) {
         e.preventDefault();
+        showFlashMessage(); // Show flash message immediately
         $.ajax({
             type: 'POST',
-            // url: '{% url "basket:basket_add" %}',
-            url: '{% url "store:run_mqtt" %}',
+            url: '{% url "store:run_client" %}',
             data: {
                 productid: $('#add-button').val(),
                 productqty: '1',
                 designation: $('#designation option:selected').text(),
                 housing: $('#housing option:selected').text(),
+                shaft: $('#shaft option:selected').text(),
                 csrfmiddlewaretoken: "{{csrf_token}}",
                 action: 'post'
             },
             success: function (json) {
-                console.log(json)
+                console.log(json);
+                triggerConfetti(); // Trigger confetti on success
             },
-            error: function (xhr, errmsg, err) {}
+            error: function (xhr, errmsg, err) {
+                hideFlashMessage(); // Hide flash message on error
+            }
         });
-    })
+    });
 
-    
+    // Function to trigger confetti
+    function triggerConfetti() {
+        const duration = 10 * 1000;
+        const end = Date.now() + duration;
+
+        (function frame() {
+            confetti({
+                particleCount: 2,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 }
+            });
+            confetti({
+                particleCount: 2,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 }
+            });
+
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+        }());
+    }
+
+    // Function to show flash message
+    function showFlashMessage() {
+        const flashMessage = document.getElementById('flash-message');
+        flashMessage.style.display = 'block';
+        setTimeout(() => {
+            flashMessage.style.display = 'none';
+        }, 5000);
+    }
+
+    // Function to hide flash message
+    function hideFlashMessage() {
+        const flashMessage = document.getElementById('flash-message');
+        flashMessage.style.display = 'none';
+    }
 </script>
+
+<style>
+    .flash-message {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #28a745;
+        color: #fff;
+        padding: 20px 40px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        font-size: 1.2em;
+        text-align: center;
+        z-index: 1000;
+    }
+    .flash-header {
+        font-weight: bold;
+        font-size: 1.4em;
+        margin-bottom: 10px;
+    }
+    .flash-body {
+        font-size: 1.2em;
+    }
+</style>
+
+
 
 {% endblock %}

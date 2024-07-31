@@ -14,7 +14,7 @@ class Basket():
             basket = self.session['skey'] = {}
         self.basket = basket
 
-    def add(self, product, qty, designation=None, housing=None):
+    def add(self, product, qty, designation=None, housing=None, shaft=None):
         """
         Adding and updating the users basket session data
         """
@@ -24,8 +24,9 @@ class Basket():
             self.basket[product_id]['qty'] = qty
             self.basket[product_id]['designation'] = designation
             self.basket[product_id]['housing'] = housing
+            self.basket[product_id]['shaft'] = shaft
         else:
-            self.basket[product_id] = {'qty': qty, 'designation': designation, 'housing':housing}
+            self.basket[product_id] = {'qty': qty, 'designation': designation, 'housing':housing, 'shaft': shaft}
 
         self.save()
 

@@ -18,19 +18,22 @@ def basket_add(request):
         product_qty = int(request.POST.get('productqty'))
         designation = request.POST.get('designation')
         housing = request.POST.get('housing')
+        shaft = request.POST.get('shaft')
         product = get_object_or_404(Product, id=product_id)
         basket.add(
             product=product,
             qty=product_qty,
             designation=designation,
-            housing=housing
+            housing=housing,
+            shaft=shaft
         )
 
         basketqty = basket.__len__()
         response = JsonResponse({
             'designation': designation.strip(), 
             'qty': basketqty, 
-            'housing' : housing.strip()
+            'housing' : housing.strip(),
+            'shaft' : shaft.strip()
         })
         return response
 
