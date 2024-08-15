@@ -106,17 +106,27 @@
     </main>
 </div>
 
-<!-- <div id="flash-message" class="flash-message">Your order is placed successfully! <br/> Thank You.</div> -->
-
 <div id="flash-message" class="flash-message">
     <div class="flash-header">Order Placed</div>
     <div class="flash-body">Your order is placed successfully. Thank You</div>
+</div>
+
+<div id="flash-message-busy" class="flash-message">
+    <div class="flash-header">Server Busy</div>
+    <div class="flash-body">Server is busy, try again later. Thank you</div>
+</div>
+
+<div id="flash-message-error" class="flash-message">
+    <div class="flash-header">Server Error</div>
+    <div class="flash-body">Kindly check your servers and clients. Make sure the Samarthya Software is running!</div>
 </div>
 
 <!-- Include confetti.js library -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
 
 <script>
+    let orderInProgress = false;
+
     function tohouse() {
         console.log("Section changed to house");
         document.documentElement.style.scrollBehavior = "smooth";
@@ -130,7 +140,12 @@
     
     $(document).on('click', '#add-button', function (e) {
         e.preventDefault();
-        showFlashMessage(); // Show flash message immediately
+        if (orderInProgress) {
+            showBusyFlashMessage();
+            return;
+        }
+        orderInProgress = true;
+        // showFlashMessage(); // Show flash message immediately
         $.ajax({
             type: 'POST',
             url: '{% url "store:run_client" %}',
@@ -145,28 +160,32 @@
             },
             success: function (json) {
                 console.log(json);
+                showFlashMessage(); // Show flash message immediately
                 triggerConfetti(); // Trigger confetti on success
             },
             error: function (xhr, errmsg, err) {
                 hideFlashMessage(); // Hide flash message on error
+            },
+            complete: function () {
+                orderInProgress = true;
             }
         });
     });
 
     // Function to trigger confetti
     function triggerConfetti() {
-        const duration = 10 * 1000;
+        const duration = 5 * 1000;
         const end = Date.now() + duration;
 
         (function frame() {
             confetti({
-                particleCount: 2,
+                particleCount: 10,
                 angle: 60,
                 spread: 55,
                 origin: { x: 0 }
             });
             confetti({
-                particleCount: 2,
+                particleCount: 10,
                 angle: 120,
                 spread: 55,
                 origin: { x: 1 }
@@ -187,10 +206,24 @@
         }, 5000);
     }
 
-    // Function to hide flash message
-    function hideFlashMessage() {
+    // Function to show busy flash message
+    function showBusyFlashMessage() {
         const flashMessage = document.getElementById('flash-message');
         flashMessage.style.display = 'none';
+        const flashMessageBusy = document.getElementById('flash-message-busy');
+        flashMessageBusy.style.display = 'block';
+        setTimeout(() => {
+            flashMessageBusy.style.display = 'none';
+        }, 5000);
+    }
+
+    // Function to hide flash message
+    function hideFlashMessage() {
+        const flashMessage = document.getElementById('flash-message-error');
+        flashMessage.style.display = 'block';
+        setTimeout(() => {
+            flashMessageBusy.style.display = 'none';
+        }, 5000);
     }
 </script>
 
@@ -210,16 +243,44 @@
         text-align: center;
         z-index: 1000;
     }
-    .flash-header {
+    #flash-message-error {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #d0342c;
+        color: #fff;
+        padding: 20px 40px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        font-size: 1.2em;
+        text-align: center;
+        z-index: 1000;
+    }
+    #flash-message-busy {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #d0342c;
+        color: #fff;
+        padding: 20px 40px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        font-size: 1.2em;
+        text-align: center;
+        z-index: 1000;
+    }
+    .flash-message .flash-header {
         font-weight: bold;
         font-size: 1.4em;
         margin-bottom: 10px;
     }
-    .flash-body {
+    .flash-message .flash-body {
         font-size: 1.2em;
     }
 </style>
-
-
 
 {% endblock %}

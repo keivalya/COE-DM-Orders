@@ -57,7 +57,9 @@ def run_client(request):
             # get bearing number (or name)
             bearing_no_node = client.get_node("ns=2;i=3")
             bearing_no_node.set_value(bearing_properties["designation"])
-            print("The selected bearing number is: ", bearing_no_node.get_value())
+            bearing_cell_node = client.get_node("ns=2;i=10")
+            bearing_cell_node.set_value(bearing_properties["cell"])
+            print("The selected bearing number is: ", bearing_no_node.get_value() , "in the cell number", str(bearing_cell_node.get_value()))
 
             # inner diameter of bearing
             inner_diameter_node = client.get_node("ns=2;i=4")
@@ -73,26 +75,32 @@ def run_client(request):
             bearing_height_node = client.get_node("ns=2;i=6")
             bearing_height_node.set_value(bearing_properties["B"])
             print("The height of the bearing is: ", bearing_height_node.get_value())
-
-            # get bearing cell number
-            bearing_cell_node = client.get_node("ns=2;i=9")
-            bearing_cell_node.set_value(bearing_properties["cell"])
-            print("The selected bearing is in the cell number: ", bearing_cell_node.get_value())
             ### BEARING PROPERTIES AND OPERATIONS  -- END HERE \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
 
             ### HOUSING PROPERTIES AND OPERATIONS  -- START HERE \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
             housing_type = str(request.POST.get("housing").strip())
+            housing_properties = get_housing_properties(housing_type)
             housing_type_node = client.get_node("ns=2;i=7")
             housing_type_node.set_value(housing_type)
             print("The selected housing number is: ", housing_type_node.get_value())
+
+            # get housing cell number=
+            housing_cell_node = client.get_node("ns=2;i=11")
+            housing_cell_node.set_value(housing_properties["cell"])
+            print("The selected housing is:", housing_type_node.get_value(), "in the cell number", str(housing_cell_node.get_value()))
             ### HOUSING PROPERTIES AND OPERATIONS  -- END HERE \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
             ### SHAFT PROPERTIES -- START HERE \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
             shaft = str(request.POST.get("shaft").strip())
+            shaft_properties = get_shaft_properties(shaft)
             shaft_node = client.get_node("ns=2;i=8")
             shaft_node.set_value(shaft)
-            print("The selected shaft is: ", shaft_node.get_value())
+
+            # get shaft cell number
+            shaft_cell_node = client.get_node("ns=2;i=13")
+            shaft_cell_node.set_value(shaft_properties["cell"])
+            print("The selected shaft is:", shaft_node.get_value(), "in the cell number", str(shaft_cell_node.get_value()))
             ### SHAFT PROPERTIES -- END HERE \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
         except Exception as e:
             print(f"Error: {e}")
