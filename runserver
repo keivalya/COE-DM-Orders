@@ -1,0 +1,2 @@
+#!/bin/bash
+exec ./manage.py runserver 10.10.8.62:8080

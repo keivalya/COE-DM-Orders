@@ -8,6 +8,11 @@ from opcua import Client
 
 import pandas as pd
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+this_ip_address = os.getenv('THIS_IP_ADDRESS')
+
 def product_all(request):
     products = Product.products.all()
     return render(request, 'store/home.html', {'products': products})
@@ -36,7 +41,7 @@ bearing cell is {properties["cell"]}"""
     return render(request, 'store/products/single.html')
 
 def run_client(request):
-    server_url = "opc.tcp://10.10.14.77:4840"
+    server_url = "opc.tcp://"+this_ip_address+":4840"
     client = Client(server_url)
     if request.POST.get('action') == 'post':
         try:
