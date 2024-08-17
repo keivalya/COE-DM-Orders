@@ -11,7 +11,7 @@ import pandas as pd
 import os
 from dotenv import load_dotenv
 load_dotenv()
-this_ip_address = os.getenv('THIS_IP_ADDRESS')
+pragnya_ip_address = os.getenv('PRAGNYA_IP_ADDRESS')
 
 def product_all(request):
     products = Product.products.all()
@@ -41,7 +41,8 @@ bearing cell is {properties["cell"]}"""
     return render(request, 'store/products/single.html')
 
 def run_client(request):
-    server_url = "opc.tcp://"+this_ip_address+":4840"
+    server_url = "opc.tcp://"+pragnya_ip_address+":4840"
+    print(server_url)
     client = Client(server_url)
     if request.POST.get('action') == 'post':
         try:
